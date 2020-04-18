@@ -11,7 +11,7 @@ function App() {
   const [hasError, setError] = useState(false);
 
   const API_KEY = process.env.REACT_APP_OPENWEATHERMAP_API_KEY;
-  const URL = `http://api.openweathermap.org/data/2.5/weather?q=${inputValue}&units=metric&appid=${API_KEY}`;
+  const URL = `https://api.openweathermap.org/data/2.5/weather?q=${inputValue}&units=metric&appid=${API_KEY}`;
 
   const getCityWeather = () => {
     if (inputValue !== '') {
