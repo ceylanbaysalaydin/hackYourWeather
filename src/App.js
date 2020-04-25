@@ -6,48 +6,78 @@ import Form from './Form';
 function App() {
   const [inputValue, setInputValue] = useState('');
   const [searchCount, setSearchCount] = useState(0);
-  const [cityWeather, setCityWeather] = useState({});
+  // const [cityWeather, setCityWeather] = useState({});
+  const [cityWeatherCards, setCityWeatherCards] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [hasError, setError] = useState(false);
 
   const API_KEY = process.env.REACT_APP_OPENWEATHERMAP_API_KEY;
-  const URL = `https://api.openweathermap.org/data/2.5/weather?q=${inputValue}&units=metric&appid=${API_KEY}`;
 
-  const getCityWeather = () => {
-    if (inputValue !== '') {
-      setLoading(true);
-      fetch(URL)
-        .then((res) => {
-          if (res.status !== 500) {
-            return res.json();
-          } else {
-            throw Error('Something went wrong...');
-          }
-        })
-        .then((data) => setCityWeather(data))
-        .catch(() => setError(true))
-        .finally(() => setLoading(false));
-    }
-  };
+  //   if (inputValue !== '') {
+  //     setLoading(true);
+  //     fetch(URL)
+  //       .then((res) => {
+  //         if (res.status !== 500) {
+  //           return res.json();
+  //         } else {
+  //           throw Error('Something went wrong...');
+  //         }
+  //       })
+  //       .then((data) => setCityWeather(data))
+  //       .catch(() => setError(true))
+  //       .finally(() => setLoading(false));
+  //   }
+  // };
 
   const onSubmit = (e) => {
     setSearchCount(searchCount + 1);
     e.preventDefault();
   };
-  const isCityWeatherReady = Object.keys(cityWeather).length !== 0;
-  useEffect(getCityWeather, [searchCount]);
+
+  const closeWeatherCard = (id) => {
+    setCityWeatherCards((currentList) => {
+      currentList = currentList.filter((card) => card.id !== id);
+      return currentList;
+    });
+  };
+  const isCityWeatherCardsReady = cityWeatherCards.length !== 0;
+  useEffect(() => {
+    const getCityWeather = async () => {
+      try {
+        const URL = `https://api.openweathermap.org/data/2.5/weather?q=${inputValue}&units=metric&appid=${API_KEY}`;
+        setLoading(true);
+        setError(false);
+        const response = await fetch(URL);
+        if (response.ok) {
+          console.log(response);
+          const data = await response.json();
+          setCityWeatherCards((currentList) => [data, ...currentList]);
+        } else {
+          throw Error('Something went wrong...');
+        }
+      } catch (e) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (inputValue !== '') {
+      getCityWeather();
+    }
+  }, [searchCount]);
 
   return (
     <div className="App">
       <h1> Weather </h1>
       <Form inputValue={inputValue} setInputValue={setInputValue} onSubmit={onSubmit} />
       {isLoading && <p> Loading... </p>}
-      {hasError && <p> Something went wrong! </p>}
-      {isCityWeatherReady && (
-        <div>
-          <WeatherCard cityWeather={cityWeather} />
-        </div>
-      )}
+      {hasError && <p className="errorMessage"> Please enter a valid city name! </p>}
+      {isCityWeatherCardsReady &&
+        cityWeatherCards.map((item) => (
+          <div key={item.id}>
+            <WeatherCard cityWeather={item} closeWeatherCard={closeWeatherCard} />
+          </div>
+        ))}
     </div>
   );
 }

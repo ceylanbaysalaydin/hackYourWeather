@@ -7,7 +7,7 @@ export default function Form({ inputValue, setInputValue, onSubmit }) {
     <div>
       <form>
         <Input inputValue={inputValue} setInputValue={setInputValue} />
-        <Button onSubmit={onSubmit} />
+        <Button onSubmit={onSubmit} isButtonDisabled={!inputValue} />
       </form>
     </div>
   );
