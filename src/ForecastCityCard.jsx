@@ -13,7 +13,7 @@ export default function ForecastCityCard() {
 
   const getForecastData = async () => {
     try {
-      const URL = `http://api.openweathermap.org/data/2.5/forecast?id=${cityId}&units=metric&appid=${API_KEY} `;
+      const URL = `https://api.openweathermap.org/data/2.5/forecast?id=${cityId}&units=metric&appid=${API_KEY} `;
       setLoading(true);
       const response = await fetch(URL);
       if (response.ok) {
