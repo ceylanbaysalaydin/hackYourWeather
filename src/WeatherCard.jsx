@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function WeatherCard({ cityWeather, closeWeatherCard }) {
   const {
@@ -10,6 +11,7 @@ function WeatherCard({ cityWeather, closeWeatherCard }) {
     coord: { lon, lat },
   } = cityWeather;
   const { main, description } = weather[0];
+  console.log(id);
   return (
     <div>
       <div className="card">
@@ -22,7 +24,9 @@ function WeatherCard({ cityWeather, closeWeatherCard }) {
           <i className="far fa-times-circle fa-2x"></i>
         </div>
         <h4>
-          {name}, {country}
+          <Link to={'/' + id}>
+            {name}, {country}
+          </Link>
         </h4>
         <h6> {main} </h6>
         <p> {description} </p>

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.css';
 import WeatherCard from './WeatherCard';
 import Form from './Form';
+import ForecastCityCard from './ForecastCityCard';
 
 function App() {
   const [inputValue, setInputValue] = useState('');
@@ -12,22 +14,6 @@ function App() {
   const [hasError, setError] = useState(false);
 
   const API_KEY = process.env.REACT_APP_OPENWEATHERMAP_API_KEY;
-
-  //   if (inputValue !== '') {
-  //     setLoading(true);
-  //     fetch(URL)
-  //       .then((res) => {
-  //         if (res.status !== 500) {
-  //           return res.json();
-  //         } else {
-  //           throw Error('Something went wrong...');
-  //         }
-  //       })
-  //       .then((data) => setCityWeather(data))
-  //       .catch(() => setError(true))
-  //       .finally(() => setLoading(false));
-  //   }
-  // };
 
   const onSubmit = (e) => {
     setSearchCount(searchCount + 1);
@@ -67,18 +53,27 @@ function App() {
   }, [searchCount]);
 
   return (
-    <div className="App">
-      <h1> Weather </h1>
-      <Form inputValue={inputValue} setInputValue={setInputValue} onSubmit={onSubmit} />
-      {isLoading && <p> Loading... </p>}
-      {hasError && <p className="errorMessage"> Please enter a valid city name! </p>}
-      {isCityWeatherCardsReady &&
-        cityWeatherCards.map((item) => (
-          <div key={item.id}>
-            <WeatherCard cityWeather={item} closeWeatherCard={closeWeatherCard} />
+    <Router>
+      <Switch>
+        <Route path="/" exact>
+          <div className="App">
+            <h1> Weather </h1>
+            <Form inputValue={inputValue} setInputValue={setInputValue} onSubmit={onSubmit} />
+            {isLoading && <p> Loading... </p>}
+            {hasError && <p className="errorMessage"> Please enter a valid city name! </p>}
+            {isCityWeatherCardsReady &&
+              cityWeatherCards.map((item) => (
+                <div key={item.id}>
+                  <WeatherCard cityWeather={item} closeWeatherCard={closeWeatherCard} />
+                </div>
+              ))}
           </div>
-        ))}
-    </div>
+        </Route>
+        <Route path="/:cityId">
+          <ForecastCityCard />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
